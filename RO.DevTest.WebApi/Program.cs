@@ -15,6 +15,8 @@ public class Program {
         builder.Services.InjectPersistenceDependencies()
             .InjectInfrastructureDependencies();
 
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<ProductService>();
         // Add Mediatr to program
         builder.Services.AddMediatR(cfg =>
         {
