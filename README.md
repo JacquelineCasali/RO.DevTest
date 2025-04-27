@@ -1,21 +1,69 @@
-# Rota das Oficinas Tecnical Test
-This project is the template to be used to create a basic e-commerce Web API.
-It already contains the basic structure of a API, that must be followed when adding more features.
+# 🛒 API E-commerce - RO.DevTest
 
-Some caracteristics of this template that  are:
+Projeto de API RESTful para um sistema básico de e-commerce, desenvolvido como desafio técnico utilizando .NET 8.
 
-- Built using .NET 8.0
-- Uses EntityFramework Core as it's ORM
-- Follows the [CQRS Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs) and [Repository Pattern](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design)
-- Uses PostgreSql as it's database engine
-- Uses Xunit, Bogus and FluentAssertions to create tests
+## 🚀 Tecnologias Utilizadas
 
-## To Dos in the Project
-In the template there are some left unfinnished features that you must do to correctly create the API. Search **[TODO]**  to find theses features.
+- .NET 8.0
+- ASP.NET Core Web API
+- Entity Framework Core
+- SQL Server
+- JWT Authentication
+- GitHub Actions (Gitflow + Commits Semânticos)
+- Docker (opcional)
+- Swagger (Documentação de API)
 
-## Feel Free to Optimize or Refactor
-If you find some code that you think can be enhanced, feel free to refactor it. But the refactor should follow the patterns of the project. Also the refactor should be separeted onn it's own commit.
+---
 
-## Creating a FrontEnd
-When creating the frontend you can choose any framework you want, but your application must connect with the Web API via HTTP requests, and it's code must be in the same repository as the Web API.
+## ⚙️ Funcionalidades Implementadas
+
+- CRUD completo de Clientes
+- CRUD completo de Produtos
+- CRUD completo de Vendas (com associação Cliente + Produtos)
+- Autenticação e Autorização com JWT
+- Controle de acesso baseado em roles (`Admin`, `User`)
+- Paginação e Filtro em listagens (Clients, Products, Sales)
+- Análise de Vendas: relatório de vendas em um período (total de vendas, receita total, receita por produto)
+- Seed automático de usuário Admin
+- API RESTful organizada por responsabilidades
+- Paginação e filtros nos endpoints
+- Relatórios de vendas
+
+
+
+---
+
+## 🔒 Usuário de Login Padrão (Seeded)
+
+- **Usuário:** admin
+- **Senha:** 123456
+- **Role:** Admin
+
+Após autenticar, você receberá um Token JWT para acessar os endpoints protegidos.
+
+---
+
+## 🛠️ Como Rodar o Projeto Localmente
+
+1. **Clone o repositório**
+```bash
+git clone https://github.com/JacquelineCasali/RO.DevTest
+
+2. **Entre na pasta **
+
+-- cd RO.DevTest
+
+3. **Restaure os pacotes **
+dotnet restore
+
+4. **Atualize o banco de dados** 
+dotnet ef database update
+
+5. **Execute a aplicação** 
+dotnet run
+
+6. ** Acesse no postman**
+
+
+## 🗂️ Principais Endpoints
 

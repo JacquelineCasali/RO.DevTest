@@ -10,37 +10,39 @@ public class Program {
     public static void Main(string[] args) {
         var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IVendaRepository, VendaRepository>();
+
+
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IProdutoService, ProductService>();
+builder.Services.AddScoped<IVendaService ,VendaService >();
+
+     // Adicionar o DbContext
+       builder.Services.AddDbContext<DefaultContext>(options => options.UseSqlServer("Connection_String"));
+
+        // Registre o AuthService
+        services.AddScoped<AuthService>();
+
+  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+        app.UseRouting();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+    }
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
-});
-
-
-
-
-        builder.Services.InjectPersistenceDependencies()
-            .InjectInfrastructureDependencies();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<ClientService>();
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<SaleService>();
 
         // Add Mediatr to program
         builder.Services.AddMediatR(cfg =>
@@ -64,6 +66,22 @@ app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (!db.Users.Any())
+    {
+        db.Users.Add(new User
+        {
+            Username = "admin",
+            PasswordHash = "123456",  
+            Role = "Admin"
+        });
+        db.SaveChanges();
+    }
+}
 
         app.Run();
     }

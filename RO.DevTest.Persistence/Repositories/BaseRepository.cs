@@ -4,76 +4,48 @@ using System.Linq.Expressions;
 
 namespace RO.DevTest.Persistence.Repositories;
 
-public class BaseRepository<T>(DefaultContext defaultContext) : IBaseRepository<T> where T : class {
-    private readonly DefaultContext _defaultContext = defaultContext;
+public class BaseRepository<T> : IBaseRepository<T> where T : class
+{
+    private readonly DefaultContext _context;
 
-    protected DefaultContext Context { get => _defaultContext; }
+    public BaseRepository(DefaultContext context)
+    {
+        _context = context;
+    }
 
-    public async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default) {
-        await Context.Set<T>().AddAsync(entity, cancellationToken);
-        await Context.SaveChangesAsync(cancellationToken);
+    public async Task<T> CreateAsync(T entity)
+    {
+        await _context.Set<T>().AddAsync(entity);
+        await _context.SaveChangesAsync();
         return entity;
     }
 
-    public async void Update(T entity) {
-        Context.Set<T>().Update(entity);
-        await Context.SaveChangesAsync();
+    public async Task UpdateAsync(T entity)
+    {
+        _context.Set<T>().Update(entity);
+        await _context.SaveChangesAsync();
     }
 
-    public async void Delete(T entity) {
-        Context.Set<T>().Remove(entity);
-        await Context.SaveChangesAsync();
+    public async Task DeleteAsync(T entity)
+    {
+        _context.Set<T>().Remove(entity);
+        await _context.SaveChangesAsync();
     }
 
-    public T? Get(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
-    => GetQueryWithIncludes(predicate, includes).FirstOrDefault();
+    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+    }
 
-    /// <summary>
-    /// Generates a filtered <see cref="IQueryable{T}"/>, based on its
-    /// <paramref name="predicate"/> and <paramref name="includes"/>, including
-    /// the data requested
-    /// </summary>
-    /// <param name="predicate">
-    /// The <see cref="Expression"/> to use as filter
-    /// </param>
-    /// <param name="includes">
-    /// The <see cref="Expression"/> to use as include
-    /// </param>
-    /// <returns>
-    /// The generated <see cref="IQueryable{T}"/>
-    /// </returns>
-    private IQueryable<T> GetQueryWithIncludes(
-        Expression<Func<T, bool>> predicate,
-        params Expression<Func<T, object>>[] includes
-    ) {
-        IQueryable<T> baseQuery = GetWhereQuery(predicate);
+    public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> predicate = null)
+    {
+        IQueryable<T> query = _context.Set<T>();
 
-        foreach(Expression<Func<T, object>> include in includes) {
-            baseQuery = baseQuery.Include(include);
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
         }
 
-        return baseQuery;
+        return await query.ToListAsync();
     }
-
-    /// <summary>
-    /// Generates an <see cref="IQueryable"/> based on
-    /// the <paramref name="predicate"/>
-    /// </summary>
-    /// <param name="predicate">
-    /// An <see cref="Expression"/> representing a filter
-    /// of it
-    /// </param>
-    /// <returns>S
-    /// The <see cref="IQueryable{T}"/>
-    /// </returns>
-    private IQueryable<T> GetWhereQuery(Expression<Func<T, bool>> predicate) {
-        IQueryable<T> baseQuery = Context.Set<T>();
-
-        if(predicate is not null) {
-            baseQuery = baseQuery.Where(predicate);
-        }
-
-        return baseQuery;
-    }
-
 }

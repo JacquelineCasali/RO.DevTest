@@ -7,10 +7,10 @@ namespace RO.DevTest.WebApi.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Sale> Sales { get; set; }
-        public DbSet<SaleItem> SaleItems { get; set; }
+        public DbSet<Cliente> clientes { get; set; }
+        public DbSet<Produto> produtos { get; set; }
+        public DbSet<Venda> Vendas { get; set; }
+   
 public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
