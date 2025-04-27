@@ -11,7 +11,7 @@ namespace RO.DevTest.WebApi.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleItem> SaleItems { get; set; }
-
+public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
